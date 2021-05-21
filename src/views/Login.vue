@@ -1,31 +1,70 @@
 <template>
-  <div class="login">
-    <h1>This is an about page</h1>
-    <Button text="Login" @buttonClicked="onLogin"/>
-    <Button text="Register" @buttonClicked="onRegister"/>
-  </div>
+  <div>
+  <form class="login login100-form validate-form" @submit.prevent="onLogin">
+    <h1>Sign in</h1>
+    <span class="login100-form-title p-b-48">
+      <i class="zmdi zmdi-font"></i>
+    </span>
+    <div class="wrap-input100 validate-input" data-validate="Valid email is: a@b.c">
+      <input class="input100" v-model="email" type="email" placeholder="Email">
+      <span class="focus-input100" data-placeholder="Email"></span>
+    </div>
+    <div class="wrap-input100 validate-input" data-validate="Enter password">
+      <span class="btn-show-pass">
+        <i class="zmdi zmdi-eye"></i>
+      </span>
+      <input class="input100" v-model="password" type="password" placeholder="Password">
+      <span class="focus-input100" data-placeholder="Password"></span>
+    </div>
+    <div class="container-login100-form-btn">
+      <div class="wrap-login100-form-btn">
+        <Button type="submit" text="Login"/>
+        <Button text="Sign Up" @buttonClicked="onRegister"/>
+      </div>
+    </div>
+    <div class="text-center p-t-115">
+      <span class="txt1">Don’t have an account?</span>
+      <a class="txt2" href="#">Sign Up</a>
+    </div>
+  </form>
+  </div> 
 </template>
 
 <script>
-// @ is an alias to /src
 import Button from '@/components/Button';
 
 export default {
   name: "Login",
   methods: {
     onLogin(){
-      console.log("Dispatch Login")
+      console.log("login")
+      let email = this.email
+      let password = this.password
+      console.log(email)
+      console.log(password)
+      this.$store.dispatch('login', { "username": email, "password": password })
+     .then(() => this.$router.push('/'))
+     .catch(err => console.log(err))
     },
     onRegister(){
-      console.log("Dispatch Register")
+      console.log("register")
+      let email = this.email
+      let password = this.password
+      console.log(email)
+      console.log(password)
+      this.$store.dispatch('register', { "username": email, "password": password })
+     .then(() => this.$router.push('/'))
+     .catch(err => console.log(err))
     }
   },
   components: {
     Button
-  }
+  },
+  data(){
+    return {
+      email : "",
+      password : ""
+    }
+  },
 };
 </script>
-
-<style scoped>
-
-</style>
