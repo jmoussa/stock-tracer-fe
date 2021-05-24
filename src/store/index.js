@@ -24,15 +24,15 @@ export default createStore({
     },
     auth_error(state, error) {
       state.status = "error";
-      console.log(error)
+      console.log(error);
       state.loggedIn = false;
     },
     logout(state) {
       state.status = "";
       state.token = "";
     },
-    rh_request_success(state){
-      state.loggedIn = true
+    rh_request_success(state) {
+      state.loggedIn = true;
     },
     set_portfolio(state, _portfolio) {
       state.portfolio_cards = _portfolio;
@@ -42,7 +42,7 @@ export default createStore({
     isLoggedIn: (state) => !!state.token,
     status: (state) => state.status,
     commonLoggedIn: (state) => state.loggedIn,
-    getPortfolioCards: (state) => state.portfolio_cards
+    getPortfolioCards: (state) => state.portfolio_cards,
   },
   actions: {
     logout({ commit }) {
@@ -121,25 +121,37 @@ export default createStore({
         const params = new URLSearchParams();
         params.append("username", user.username);
         params.append("password", user.password);
-        let config = {
-          headers: {
-            "content-type": "application/x-www-form-urlencoded;charset=utf-8",
-            accept: "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
+        const body = {
+          username: user.username,
+          password: user.password,
         };
-        axios
-          .post(rh_portfolio, params, config)
-          .then((resp) => {
-            let portfolio_response = resp.data;
-            commit("set_portfolio", portfolio_response);
-            commit("rh_request_success");
-            resolve(portfolio_response);
-          })
-          .catch((err) => {
-            commit("auth_error", err);
-            reject(err);
+        let token = localStorage.getItem("token");
+        if (token != "" && token != undefined) {
+          const instance = axios.create({
+            timeout: 10000,
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              Authorization: `Bearer ${token}`,
+            },
           });
+          instance
+            .post(rh_portfolio, body)
+            .then((resp) => {
+              let portfolio_response = resp.data;
+              commit("set_portfolio", portfolio_response);
+              commit("rh_request_success");
+              resolve(portfolio_response);
+            })
+            .catch((err) => {
+              commit("auth_error", err);
+              localStorage.removeItem("token");
+              reject(err);
+            });
+        } else {
+          commit("auth_error", "No token found");
+          localStorage.removeItem("token");
+          reject("No token found");
+        }
       });
     },
   },
