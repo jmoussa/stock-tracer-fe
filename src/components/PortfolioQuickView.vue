@@ -76,20 +76,19 @@ export default {
  
 .card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  border: 2px solid #2c3e50;
+  border: 2px solid #42b983;
   border-radius: 5px;
   padding: .5rem;
-  background: #000;
 }
 .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.7);
   color: #fff
 }
 .portfolio-quick-view {
-  background-color: #42b983;
+  background-color: ##2c3e50;
   margin: 5px;
   overflow: auto;
-  border: 2px solid #2c3e50;
+  border: 2px solid #42b983;
   padding: 15px;
   border-radius: 10px;
   max-height: 500px;

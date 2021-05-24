@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
   <form class="login login100-form validate-form" @submit.prevent="onLogin">
     <h1>Sign-in</h1>
     <span class="login100-form-title p-b-48">
@@ -62,3 +62,13 @@ export default {
   },
 };
 </script>
+
+<style scroped>
+* {
+  color: #fff;
+}
+.wrap-input100 > input {
+  color: #000;
+}
+
+</style>

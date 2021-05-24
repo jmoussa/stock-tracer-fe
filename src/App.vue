@@ -41,10 +41,11 @@ body {
 }
 
 .container {
-  margin: 25px;
+  margin: 2rem auto;
+  width: 80%;
   overflow: auto;
   min-height: 1000px;
-  border: 1px solid  #2c3e50;
+  border: 1px solid  #42b983;
   padding: 20px;
   border-radius: 10px;
 }
