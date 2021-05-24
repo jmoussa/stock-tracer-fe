@@ -1,4 +1,5 @@
 <template>
+  <h1>Portfolio: at a glance</h1>
   <div class="portfolio-quick-view" id="portfolio-quick-view">
     <div v-if="loggedIn" class="cards" id="rh-personal-portfolio">
       <Card class="card" v-for="(body, ticker) in portfolio" :key="ticker" :initialTitle="ticker" :initialBody="body"/>  
@@ -70,7 +71,8 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: auto;
-  grid-gap: 1rem;
+  grid-gap: 1.5rem;
+  padding: 2rem;
 }
  
 .card {

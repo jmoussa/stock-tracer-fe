@@ -1,8 +1,8 @@
 <template>
-  <div v-if ="title" class="portfolio-card">
+  <div v-if="title" class="portfolio-card">
     <h2>{{ title }}</h2>
     <ul>
-      <li v-for="(key, value) in body" :key="key" class="rh-portfolio-card-info">{{ key }} : {{ value }}</li>
+      <li v-for="(value, key) in body" :key="key" class="rh-portfolio-card-info">{{ key }} : {{ value }}</li>
     </ul>
   </div>
 </template>
