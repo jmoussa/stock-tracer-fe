@@ -7,7 +7,7 @@
       <span v-if="isLoggedIn"><router-link to="/login" class="nav-element">Login</router-link></span>
       <router-link to="/" class="nav-element"> Home </router-link>
       <router-link to="/about" class="nav-element"> About </router-link>
-      <span v-if="isLoggedIn"><a  class="nav-element" @click="logout">Logout</a></span>
+      <span v-if="isLoggedIn"><a class="nav-element" @click="logout">Logout</a></span>
     </div>
   </div>
 </template>
@@ -60,8 +60,7 @@ export default {
   color: #fff; 
 }
 #nav a.router-link-exact-active {
-  text-decoration: underline;
-  color: #42b983;
+  color: #fff;
 }
 h2 {
   color: #42b983;

@@ -1,32 +1,30 @@
 <template>
-  <div class="container">
-  <form class="login login100-form validate-form" @submit.prevent="onLogin">
-    <h1>Sign-in</h1>
-    <span class="login100-form-title p-b-48">
-      <i class="zmdi zmdi-font"></i>
-    </span>
-    <div class="wrap-input100 validate-input" data-validate="Valid email is: a@b.c">
-      <input class="input100" v-model="email" type="email" placeholder="Email">
-      <span class="focus-input100" data-placeholder="Email"></span>
-    </div>
-    <div class="wrap-input100 validate-input" data-validate="Enter password">
-      <span class="btn-show-pass">
-        <i class="zmdi zmdi-eye"></i>
+  <div class="login-container">
+    <form class="login login100-form validate-form" @submit.prevent="onLogin">
+      <h1>Sign-in to Stock Tracer</h1>
+      <span class="login100-form-title p-b-48">
+        <i class="zmdi zmdi-font"></i>
       </span>
-      <input class="input100" v-model="password" type="password" placeholder="Password">
-      <span class="focus-input100" data-placeholder="Password"></span>
-    </div>
-    <div class="container-login100-form-btn">
-      <div class="wrap-login100-form-btn">
-        <Button type="submit" text="Login"/>
-        <Button text="Sign Up" @buttonClicked="onRegister"/>
+      <div class="wrap-input100 validate-input" data-validate="Valid email is: a@b.c">
+        <input class="input100" v-model="email" type="email" placeholder="Email">
+        <span class="focus-input100" data-placeholder="Email"></span>
       </div>
-    </div>
-    <div class="text-center p-t-115">
-      <span class="txt1">Don’t have an account?</span>
-      <a class="txt2">Sign Up</a>
-    </div>
-  </form>
+      <div class="wrap-input100 validate-input" data-validate="Enter password">
+        <span class="btn-show-pass">
+          <i class="zmdi zmdi-eye"></i>
+        </span>
+        <input class="input100" v-model="password" type="password" placeholder="Password">
+        <span class="focus-input100" data-placeholder="Password"></span>
+      </div>
+      <div class="button-group-1">
+        <div class="container-login100-form-btn">
+          <div class="wrap-login100-form-btn">
+            <Button type="submit" text="Login"/>
+            <Button text="Sign Up" @buttonClicked="onRegister"/>
+          </div>
+        </div>
+      </div>
+    </form>
   </div> 
 </template>
 
@@ -67,8 +65,30 @@ export default {
 * {
   color: #fff;
 }
+h1 {
+  margin: 2rem 0;
+}
 .wrap-input100 > input {
   color: #000;
 }
-
+.login-container {
+  padding: 1rem;
+  margin: 2rem auto;
+  width: 50%;
+  overflow: auto;
+  min-height: 200px;
+  border: 1px solid  #42b983;
+  padding: 20px;
+  border-radius: 10px;
+}
+input {
+  margin: .5rem;
+  font-size: 1.2rem;
+  border: 3px solid #555;
+  padding: 10px;
+  border-radius: 10px;
+}
+.button-group-1 {
+  margin: 1rem;
+}
 </style>
