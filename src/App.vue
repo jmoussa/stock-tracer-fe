@@ -37,14 +37,14 @@ export default {
 
 body {
   font-family: 'Poppins', sans-serif;
+  background-color: #2c3e50;
 }
 
 .container {
-  max-width: 850px;
-  margin: 25px auto;
+  margin: 25px;
   overflow: auto;
-  min-height: 300px;
-  border: 1px solid steelblue;
+  min-height: 1000px;
+  border: 1px solid  #2c3e50;
   padding: 20px;
   border-radius: 10px;
 }

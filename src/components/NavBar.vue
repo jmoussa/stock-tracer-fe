@@ -31,11 +31,13 @@ export default {
 }
 
 #nav a {
+  text-decoration: underline;
   font-weight: bold;
-  color: #2c3e50;
+  color: #42b983;
 }
 
 #nav a.router-link-exact-active {
+  text-decoration: underline;
   color: #42b983;
 }
 </style>
