@@ -3,14 +3,14 @@ import axios from "axios";
 
 const login_url = "http://127.0.0.1:8000/api/token";
 const register = "http://127.0.0.1:8000/api/register";
-//const get_user_from_token = "http://127.0.0.1:8000/api/verify";
+const rh_portfolio = "http://127.0.0.1:8000/api/rh_portfolio";
 
 export default createStore({
   state: {
+    portfolio_cards: {},
     status: "",
     token: localStorage.getItem("token") || "",
     user: {},
-    isLoading: false,
     loggedIn: false,
   },
   mutations: {
@@ -22,18 +22,27 @@ export default createStore({
       state.token = token;
       state.user = user;
     },
-    auth_error(state) {
+    auth_error(state, error) {
       state.status = "error";
+      console.log(error)
+      state.loggedIn = false;
     },
     logout(state) {
       state.status = "";
       state.token = "";
     },
+    rh_request_success(state){
+      state.loggedIn = true
+    },
+    set_portfolio(state, _portfolio) {
+      state.portfolio_cards = _portfolio;
+    },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
-    authStatus: (state) => state.status,
-    isLoading: (state) => state.isLoading,
+    status: (state) => state.status,
+    commonLoggedIn: (state) => state.loggedIn,
+    getPortfolioCards: (state) => state.portfolio_cards
   },
   actions: {
     logout({ commit }) {
@@ -63,14 +72,13 @@ export default createStore({
             //Expects a JSON with 'token' and 'user' keys
             let token = resp.data.access_token;
             let user = resp.data.user;
-            console.log(resp.data);
             localStorage.setItem("token", token);
             axios.defaults.headers.common["Authorization"] = token;
             commit("auth_success", token, user);
             resolve(resp);
           })
           .catch((err) => {
-            commit("auth_error");
+            commit("auth_error", err);
             localStorage.removeItem("token");
             reject(err);
           });
@@ -101,8 +109,35 @@ export default createStore({
             resolve(resp);
           })
           .catch((err) => {
-            commit("auth_error");
+            commit("auth_error", err);
             localStorage.removeItem("token");
+            reject(err);
+          });
+      });
+    },
+    rhLogin({ commit }, user) {
+      return new Promise((resolve, reject) => {
+        commit("auth_request");
+        const params = new URLSearchParams();
+        params.append("username", user.username);
+        params.append("password", user.password);
+        let config = {
+          headers: {
+            "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+            accept: "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        };
+        axios
+          .post(rh_portfolio, params, config)
+          .then((resp) => {
+            let portfolio_response = resp.data;
+            commit("set_portfolio", portfolio_response);
+            commit("rh_request_success");
+            resolve(portfolio_response);
+          })
+          .catch((err) => {
+            commit("auth_error", err);
             reject(err);
           });
       });

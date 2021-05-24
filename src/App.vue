@@ -40,13 +40,13 @@ body {
 }
 
 .container {
-  max-width: 500px;
-  margin: 30px auto;
+  max-width: 850px;
+  margin: 25px auto;
   overflow: auto;
   min-height: 300px;
   border: 1px solid steelblue;
-  padding: 30px;
-  border-radius: 5px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .btn {

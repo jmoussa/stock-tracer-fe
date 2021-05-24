@@ -1,7 +1,7 @@
 <template>
   <div>
   <form class="login login100-form validate-form" @submit.prevent="onLogin">
-    <h1>Sign in</h1>
+    <h1>Sign-in</h1>
     <span class="login100-form-title p-b-48">
       <i class="zmdi zmdi-font"></i>
     </span>
@@ -24,7 +24,7 @@
     </div>
     <div class="text-center p-t-115">
       <span class="txt1">Don’t have an account?</span>
-      <a class="txt2" href="#">Sign Up</a>
+      <a class="txt2">Sign Up</a>
     </div>
   </form>
   </div> 
@@ -37,24 +37,18 @@ export default {
   name: "Login",
   methods: {
     onLogin(){
-      console.log("login")
       let email = this.email
       let password = this.password
-      console.log(email)
-      console.log(password)
       this.$store.dispatch('login', { "username": email, "password": password })
      .then(() => this.$router.push('/'))
-     .catch(err => console.log(err))
+     .catch(err => console.error(err))
     },
     onRegister(){
-      console.log("register")
       let email = this.email
       let password = this.password
-      console.log(email)
-      console.log(password)
       this.$store.dispatch('register', { "username": email, "password": password })
      .then(() => this.$router.push('/'))
-     .catch(err => console.log(err))
+     .catch(err => console.error(err))
     }
   },
   components: {
