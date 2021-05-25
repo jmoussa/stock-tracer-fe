@@ -88,13 +88,13 @@ export default {
   padding: .3rem;
   background-color: #050517;
   margin-bottom: -1.5rem;
-  transition: transform .3s;
+  transition: transform .1s;
 }
 .card:hover {
   border: 2px solid #42b983;
   z-index: 1;
   transform: translateX(10px);
-  box-shadow: 0 .9rem 1.3rem 0 rgba(0,0,0,0.7);
+  box-shadow: 0 1.3rem 1.3rem 0 rgba(0,0,0,0.7);
 }
 .portfolio-quick-view {
   background-color: #2c3e50;
