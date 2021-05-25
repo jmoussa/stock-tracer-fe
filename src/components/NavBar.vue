@@ -4,7 +4,7 @@
       <h2>Stock Tracer</h2>
     </div>
     <div id="nav-right">
-      <span v-if="isLoggedIn"><router-link to="/login" class="nav-element">Login</router-link></span>
+      <span v-if="!isLoggedIn"><router-link to="/login" class="nav-element">Login</router-link></span>
       <router-link to="/" class="nav-element"> Home </router-link>
       <router-link to="/about" class="nav-element"> About </router-link>
       <span v-if="isLoggedIn"><a class="nav-element" @click="logout">Logout</a></span>
@@ -32,13 +32,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #nav {
+  z-index: 10;
+  position: fixed;
+  top: 0; 
   padding: 2rem;
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  margin: auto;
   display: block;
   font-size: 2rem;
-  height: 6rem;
+  height: 8rem;
+  background: #2c3e50;
 }
 
 #nav-left {
@@ -52,6 +55,7 @@ export default {
   padding-left: 1rem;
 }
 #nav a {
+  cursor: pointer;
   text-decoration: none;
   font-weight: bold;
   color: #42b983;

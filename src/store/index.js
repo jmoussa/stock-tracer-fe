@@ -115,16 +115,13 @@ export default createStore({
           });
       });
     },
-    rhLogin({ commit }, user) {
+    rhGetPortfolio({ commit }) {
       return new Promise((resolve, reject) => {
         commit("auth_request");
-        const params = new URLSearchParams();
-        params.append("username", user.username);
-        params.append("password", user.password);
-        const body = {
-          username: user.username,
-          password: user.password,
-        };
+        //const body = {
+        //username: user.username,
+        //password: user.password,
+        //};
         let token = localStorage.getItem("token");
         if (token != "" && token != undefined) {
           const instance = axios.create({
@@ -135,7 +132,7 @@ export default createStore({
             },
           });
           instance
-            .post(rh_portfolio, body)
+            .get(rh_portfolio)
             .then((resp) => {
               let portfolio_response = resp.data;
               commit("set_portfolio", portfolio_response);

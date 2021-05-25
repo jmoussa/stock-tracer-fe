@@ -1,5 +1,5 @@
 <template>
-  <button @click="onClick()" :style="{background: color}" class="btn" type="{type}">{{text}}</button> 
+  <button @click="onClick()" :style="style" class="btn" type="{type}">{{text}}</button> 
 </template>
 
 <script>
@@ -11,11 +11,24 @@ export default {
       type:String,
       default: "#00A1E4"
     },
+    variant: {
+      type: String,
+      default: "solid"
+    },
     type: {
       type: String,
       default: "button"
     },
     buttonClicked: Function
+  },
+  computed: {
+    style () {
+      if(this.variant != "outline"){
+        return 'background-color: ' + this.color;
+      }else{
+        return "background-color: #fff; border: 2px solid " + this.color + ";color:#000;";
+      }
+    }
   },
   methods: {
     onClick(){

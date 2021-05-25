@@ -19,8 +19,8 @@
       <div class="button-group-1">
         <div class="container-login100-form-btn">
           <div class="wrap-login100-form-btn">
-            <Button type="submit" text="Login"/>
-            <Button text="Sign Up" @buttonClicked="onRegister"/>
+            <Button color="#42b983" type="submit" text="Login"/>
+            <Button color="#2c3e50" variant="outline" text="Sign Up" @buttonClicked="onRegister"/>
           </div>
         </div>
       </div>

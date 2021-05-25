@@ -23,7 +23,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #F5F5F5;
 }
 
 
@@ -42,10 +42,10 @@ body {
 
 .container {
   margin: 2rem auto;
-  width: 80%;
-  overflow: auto;
+  width: 100%;
+  overflow: visible;
   min-height: 1000px;
-  border: 1px solid  #42b983;
+  /*border: 1px solid  #42b983;*/
   padding: 20px;
   border-radius: 10px;
 }
@@ -53,7 +53,7 @@ body {
 .btn {
   display: inline-block;
   background: #000;
-  color: #fff;
+  color: #F5F5F5;
   border: none;
   padding: 10px 20px;
   margin: 5px;
