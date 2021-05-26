@@ -1,22 +1,21 @@
 <template>
   <div v-if="title" class="portfolio-card">
     <h3>{{ title }}</h3>
-    <h4>{{ body.name }}</h4>
-    <ul>
-      <li v-for="(value, key) in body" :key="key" class="rh-portfolio-card-info">
-        <div v-if="left_pill == key" class="left-pill">
-          <span>$ {{ Math.round(100*value)/100 }}</span>
-        </div> 
-        <div v-if="right_pill == key" class="right-pill">
-          <span>{{ Math.round(100*value)/100 }}%</span>
-        </div>
-        <!-- 
-        <div class="ticker-info" v-if="visible_fields.includes(key)">
-          <strong>{{ key }}</strong>: {{ value }}
-        </div> 
-        -->
-      </li>
-    </ul>
+    <h4>{{ initialBody.name }}</h4>
+    <div v-for="(value, key) in body" :key="key" class="rh-portfolio-card-info">
+      <div v-if="left_pill == key && value < 0" class="left-pill red-pill">
+        <span>$ {{ Math.round(100*value)/100 }}</span>
+      </div> 
+      <div v-if="left_pill == key && value >= 0" class="left-pill green-pill">
+        <span>$ +{{ Math.round(100*value)/100 }}</span>
+      </div>
+      <div v-if="right_pill == key && value < 0" class="right-pill red-pill">
+        <span>{{ Math.round(100*value)/100 }}%</span>
+      </div>
+      <div v-if="right_pill == key && value >= 0" class="right-pill green-pill">
+        <span>+{{ Math.round(100*value)/100 }}%</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,7 +32,7 @@ export default {
     visible_fields: {
       type: Array,
       default: function () {
-        return ['price', 'quantity', 'percent_change', 'equity', 'equity_change'];
+        return ['percent_change', 'equity_change'];
       }
     },
     left_pill: {
@@ -47,7 +46,7 @@ export default {
   },
   data: function () {
     return {
-      body: this.initialBody,
+      body: Object.keys(this.initialBody).filter(key => this.visible_fields.includes(key) ),
       title: this.initialTitle,
     }
   },
@@ -62,43 +61,48 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 .portfolio-card {
-  height: 20rem;
+  height: 15rem;
+  width: 20rem;
+  margin: 0;
 }
 h3 {
   margin: 1rem;
   color: #42b983;
 }
-ul {
-  padding: 1rem 1.5rem;
-  text-align: left;
-  list-style-type: none;
+.red-pill { 
+  background: #DF2935;
+}
+.green-pill { 
+  background: #42b983
 }
 .left-pill {
   z-index: 5;
   float: left;
-  font-size: 1rem;
+  text-decoration: bold;
+  font-size: 1.2rem;
   text-align: center;
   width: 50%;
   margin: auto;
   padding: 1rem;
-  border: 3px solid #42b983;
-  height: 3.5rem;
+  border-right: 1px solid black;
   border-radius: 20px 0px 0px 20px;
 }
 .right-pill {
   z-index: 5;
   float: right;
-  font-size: 1rem;
+  font-size: 1.2rem;
   text-align: center;
   width: 50%;
   margin: auto;
   padding: 1rem;
-  border: 3px solid #42b983;
-  height: 3.5rem;
+  border-left: 1px solid black;
   border-radius: 0px 20px 20px 0px;
 }
 .rh-portfolio-card-info {
   z-index: 5;
-  width: 100%;
+  text-align: center;
+  margin: auto;
+  width: 80%;
+  margin-top: 2rem;
 }
 </style>
