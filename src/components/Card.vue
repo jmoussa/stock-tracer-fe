@@ -46,7 +46,10 @@ export default {
   },
   data: function () {
     return {
-      body: Object.keys(this.initialBody).filter(key => this.visible_fields.includes(key) ),
+      body: Object.keys(this.initialBody).filter(key => this.visible_fields.includes(key) ).reduce((obj, key) => {
+        obj[key] = this.initialBody[key];
+        return obj;
+      }, {}),
       title: this.initialTitle,
     }
   },
@@ -64,6 +67,11 @@ export default {
   height: 15rem;
   width: 20rem;
   margin: 0;
+  background: linear-gradient(355deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 89%, rgba(255,255,255,1) 120%);
+}
+
+.portfolio-card:hover {
+  background: linear-gradient(350deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 89%, rgba(255,255,255,1) 110%);
 }
 h3 {
   margin: 1rem;
