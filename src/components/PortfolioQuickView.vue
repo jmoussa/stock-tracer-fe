@@ -63,6 +63,11 @@ export default {
       password : "",
     }
   },
+  created() {
+      this.$store.dispatch('rhGetPortfolio')
+     .then((res) => console.log(res))
+     .catch(err => console.error(err))
+  }
 };
 </script>
 
