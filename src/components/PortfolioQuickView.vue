@@ -1,8 +1,13 @@
 <template>
   <div class="portfolio-quick-view" id="portfolio-quick-view">
-    <div v-if="loggedIn" class="cards" id="rh-personal-portfolio">
-      <h2>Positions</h2>
-      <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body"/>
+    <div v-if="loggedIn">
+      <div class="cards" id="rh-personal-portfolio">
+        <h2>Positions</h2>
+        <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body"/>
+      </div>
+      <div class="d3-chart-container">
+        <D3Chart/>
+      </div>
     </div>
     <div v-else id="rh-portfolio-login">
       <form class="login login100-form validate-form" @submit.prevent="onRHLogin">
@@ -34,6 +39,7 @@
 <script>
 import Card from '@/components/Card'
 import Button from '@/components/Button'
+import D3Chart from '@/components/D3Chart'
 
 export default {
   name: "PortfolioQuickView",
@@ -44,6 +50,7 @@ export default {
   components: {
     Card,
     Button,
+    D3Chart,
   },
   methods: {
     open_stock_modal: function () {
@@ -109,5 +116,9 @@ export default {
   /*border: 2px solid #42b983;*/
   padding: 15px;
   /*border-radius: 10px;*/
+}
+.d3-chart-container {
+  width:75%; 
+  float: right;
 }
 </style>
