@@ -3,10 +3,10 @@
     <div v-if="loggedIn">
       <div class="cards" id="rh-personal-portfolio">
         <h2>Positions</h2>
-        <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body"/>
+        <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body" @mouseover="selected_ticker=ticker"/>
       </div>
       <div class="d3-chart-container">
-        <D3Chart/>
+        <D3Chart :ticker="selected_ticker"/>
       </div>
     </div>
     <div v-else id="rh-portfolio-login">
@@ -68,6 +68,7 @@ export default {
     return {
       username: "",
       password : "",
+      selected_ticker: ""
     }
   },
   created() {
@@ -110,12 +111,9 @@ export default {
 }
 .portfolio-quick-view {
   background-color: #2c3e50;
-  margin: auto;
-  margin-top: 8rem;
+  padding: 0;
+  margin-top: 5rem;
   overflow: visible;
-  /*border: 2px solid #42b983;*/
-  padding: 15px;
-  /*border-radius: 10px;*/
 }
 .d3-chart-container {
   width:75%; 
