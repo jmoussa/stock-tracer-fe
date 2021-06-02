@@ -38,15 +38,21 @@ export default {
       let email = this.email
       let password = this.password
       this.$store.dispatch('login', { "username": email, "password": password })
-     .then(() => this.$router.push('/'))
-     .catch(err => console.error(err))
+        .then(() => {
+          this.$store.dispatch('rhGetPortfolio')
+          this.$router.push('/')
+        })
+        .catch(err => console.error(err))
     },
     onRegister(){
       let email = this.email
       let password = this.password
       this.$store.dispatch('register', { "username": email, "password": password })
-     .then(() => this.$router.push('/'))
-     .catch(err => console.error(err))
+        .then(() => {
+          this.$store.dispatch('rhGetPortfolio')
+          this.$router.push('/')
+        })
+        .catch(err => console.error(err))
     }
   },
   components: {

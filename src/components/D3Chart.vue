@@ -1,7 +1,9 @@
 <template>
   <div class="d3-chart">
     <h2>D3 Charts {{ ticker }}</h2>
-
+    <div class="chart">
+      chart
+    </div>
   </div>
 </template>
 
@@ -33,11 +35,12 @@ export default {
 .d3-chart {
   position: fixed;
   height: 750px;
-  width: 100%;
+  width: 70%;
   margin: 0; 
-  border: 2px solid #42b983;
-  border-radius: 10px;
+  /*border: 2px solid #42b983;*/
+  /*border-radius: 10px;*/
 }
+
 h2 {
   margin: 1rem;
   font-size: 2rem;

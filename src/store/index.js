@@ -4,10 +4,12 @@ import axios from "axios";
 const login_url = "http://127.0.0.1:8000/api/token";
 const register = "http://127.0.0.1:8000/api/register";
 const rh_portfolio = "http://127.0.0.1:8000/api/rh_portfolio";
+const rh_historical = "http://127.0.0.1:8000/api/rh_historical";
 
 export default createStore({
   state: {
     portfolio_cards: {},
+    historical_data: {},
     status: "",
     token: localStorage.getItem("token") || "",
     user: {},
@@ -36,6 +38,9 @@ export default createStore({
     },
     set_portfolio(state, _portfolio) {
       state.portfolio_cards = _portfolio;
+    },
+    set_historicals(state, _historicals) {
+      state.historical_data = _historicals;
     },
   },
   getters: {
@@ -136,6 +141,38 @@ export default createStore({
             .then((resp) => {
               let portfolio_response = resp.data;
               commit("set_portfolio", portfolio_response);
+              commit("rh_request_success");
+              resolve(portfolio_response);
+            })
+            .catch((err) => {
+              commit("auth_error", err);
+              localStorage.removeItem("token");
+              reject(err);
+            });
+        } else {
+          commit("auth_error", "No token found");
+          localStorage.removeItem("token");
+          reject("No token found");
+        }
+      });
+    },
+    rhGetHistoricals({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit("auth_request");
+        let token = localStorage.getItem("token");
+        if (token != "" && token != undefined) {
+          const instance = axios.create({
+            timeout: 10000,
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          instance
+            .get(rh_historical)
+            .then((resp) => {
+              let portfolio_response = resp.data;
+              commit("set_historicals", portfolio_response);
               commit("rh_request_success");
               resolve(portfolio_response);
             })

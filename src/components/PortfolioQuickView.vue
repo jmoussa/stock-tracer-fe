@@ -9,6 +9,10 @@
         <D3Chart :ticker="selected_ticker"/>
       </div>
     </div>
+    <div v-else-if="status == 'loading'">
+      <h1>Loading</h1>
+      <div class="progress-6"></div> 
+    </div>
     <div v-else id="rh-portfolio-login">
       <form class="login login100-form validate-form" @submit.prevent="onRHLogin">
         <h1>Sign-in to Robinhood</h1>
@@ -44,6 +48,7 @@ import D3Chart from '@/components/D3Chart'
 export default {
   name: "PortfolioQuickView",
   computed : {
+    status: function(){return this.$store.state.status},
     loggedIn : function(){ return this.$store.getters.commonLoggedIn},
     portfolio: function(){ return this.$store.getters.getPortfolioCards}
   },
@@ -57,8 +62,6 @@ export default {
       console.log('open a stock modal with all info on stock + graph') 
     },
     onRHLogin: function () {
-      /*let username= this.username*/
-      /*let password = this.password*/
       this.$store.dispatch('rhGetPortfolio')
      .then((resp) => console.log(resp))
      .catch(err => console.error(err))
@@ -70,16 +73,31 @@ export default {
       password : "",
       selected_ticker: ""
     }
-  },
-  created() {
-      this.$store.dispatch('rhGetPortfolio')
-     .then((res) => console.log(res))
-     .catch(err => console.error(err))
   }
 };
 </script>
 
 <style scoped>
+.progress-6 {
+  width:120px;
+  height:22px;
+  border-radius: 20px;
+  color:#514b82;
+  border:2px solid;
+  position: relative;
+}
+.progress-6::before {
+  content:"";
+  position: absolute;
+  margin:2px;
+  inset:0 100% 0 0;
+  border-radius: inherit;
+  background:currentColor;
+  animation:p6 1.5s infinite;
+}
+@keyframes p6 {
+    100% {inset:0}
+}
 .cards {
   float: left;
   width: 25%;
