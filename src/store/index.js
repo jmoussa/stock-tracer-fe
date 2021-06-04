@@ -14,6 +14,8 @@ export default createStore({
     token: localStorage.getItem("token") || "",
     user: {},
     loggedIn: false,
+    selectedTicker: null,
+    selectedTickerInfo: {},
   },
   mutations: {
     auth_request(state) {
@@ -42,12 +44,22 @@ export default createStore({
     set_historicals(state, _historicals) {
       state.historical_data = _historicals;
     },
+    set_selected_ticker(state, _selectedTicker) {
+      state.selectedTicker = _selectedTicker;
+    },
+    set_selected_ticker_info(state, _selectedTickerInfo) {
+      state.selectedTickerInfo = _selectedTickerInfo;
+    },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
     status: (state) => state.status,
     commonLoggedIn: (state) => state.loggedIn,
     getPortfolioCards: (state) => state.portfolio_cards,
+    getSelectedTicker: (state) => state.selectedTicker,
+    getSelectedTickerInfo: (state) => state.selectedTickerInfo,
+    getSelectedTickerHistoricalData: (state) =>
+      state.historical_data[state.selectedTicker],
   },
   actions: {
     logout({ commit }) {
