@@ -1,8 +1,12 @@
 <template>
-  <div class="d3-chart">
-    <h2>D3 Charts {{ ticker }}</h2>
+  <div class="d3-chart" @click="onClick">
+    <h2>{{ ticker }}</h2>
     <div class="chart">
-      chart
+      {{ticker_info}}
+
+      <div v-if="historicals != undefined">
+        {{historicals}}
+      </div>
     </div>
   </div>
 </template>
@@ -10,22 +14,25 @@
 <script>
 export default {
   name: "D3Chart",
+  computed: {
+    ticker_info: function() { return this.$store.getters.getSelectedTickerInfo },
+    historicals: function() { return this.$store.getters.getSelectedTickerHistoricalData }
+  }, 
   props: {
     ticker: String
   },
   methods: {
     onClick(){
-      console.log("portfolioButtonClicked"); 
+      console.log("Clicked"); 
     }
   },
   data() {
     return { 
       data: []
+
     }
   },
-  created() {
-    // Fetch data for d3 chart
-
+  mounted() {
   }
 };
 </script>
