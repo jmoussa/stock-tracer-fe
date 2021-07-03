@@ -4,13 +4,11 @@
     <div class="chart">
       <div class="generic-container">
         <div class="wrapper" v-if="ticker_info">
-          <div class="grid-info-item" v-for="(item, key, index) in ticker_info" :key="index"><li><strong>{{ key }}</strong>: {{ item }}</li></div> 
+          <div class="grid-info-item" v-for="(item, key, index) in ticker_info" :key="index"><li><strong class="bold-accent">{{ key }}</strong>: {{ item }}</li></div> 
         </div>
         <div class="progress-6" v-else></div>
       </div>
-      <div id="plot" v-if="historicals">
-        <h1>{{ ticker }} Historicals</h1>
-      </div>
+      <div id="plot" v-if="historicals"></div>
       <div class="progress-6" v-else></div> 
     </div>
   </div>
@@ -91,7 +89,7 @@ export default {
         // set the dimensions and margins of the graph
         const margin = { top: 10, right: 25, bottom: 25, left: 25 };
         const width = 1200 - margin.left - margin.right;
-        const height = 300 - margin.top - margin.bottom;
+        const height = 500 - margin.top - margin.bottom;
 
         // Clear Charts
         d3.select("#plot").selectAll("svg").remove();
@@ -176,11 +174,11 @@ li {
   border-radius: 2rem;
   padding: 2rem;
   grid-auto-rows: minmax(10px, auto);
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 .grid-info-item {
-  margin: 2px;
-  padding: 1px;
+  margin: 0 4px;
+  padding: 0 2px;
 }
 
 .progress-6 {
@@ -214,9 +212,11 @@ li {
 }
 
 h2 {
-  margin: 1rem;
+  margin: 0.5rem 0 ;
   font-size: 2rem;
   color: #42b983;
 }
-
+.bold-accent {
+  color: #42b983;
+}
 </style>
