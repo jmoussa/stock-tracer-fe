@@ -6,7 +6,8 @@
         <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body" @mouseover="fetchTicker(ticker)"/>
       </div>
       <div class="d3-chart-container">
-        <D3Chart :ticker="selected_ticker"/>
+        <D3Chart :ticker="selected_ticker" v-if="selected_ticker != undefined"/>
+        <div v-else class="progress-6"></div>
       </div>
     </div>
     <div v-else-if="status == 'loading'">
@@ -51,7 +52,7 @@ export default {
     status: function(){return this.$store.state.status},
     loggedIn : function(){ return this.$store.getters.commonLoggedIn},
     portfolio: function(){ return this.$store.getters.getPortfolioCards},
-    selected_ticker_info: function() { return this.$store.getters.getSelectedTickerInfo },
+    // selected_ticker_info: function() { return this.$store.getters.getSelectedTickerInfo },
     selected_ticker: function(){ return this.$store.getters.getSelectedTicker }
   },
   components: {
@@ -65,7 +66,7 @@ export default {
     },
     onRHLogin: function () {
       this.$store.dispatch('rhGetPortfolio')
-     .then((resp) => console.log(resp))
+      this.$store.dispatch('rhGetHistoricals')
      .catch(err => console.error(err))
     },
     fetchTicker(ticker){
@@ -88,7 +89,7 @@ export default {
   height:300px;
   border-radius: 20px;
   margin: auto;
-  color:#514b82;
+  color: rgba(66, 185, 131, 1);
   border:2px solid;
   position: relative;
 }
