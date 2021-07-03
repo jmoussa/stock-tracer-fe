@@ -52,8 +52,12 @@ export default {
     status: function(){return this.$store.state.status},
     loggedIn : function(){ return this.$store.getters.commonLoggedIn},
     portfolio: function(){ return this.$store.getters.getPortfolioCards},
-    // selected_ticker_info: function() { return this.$store.getters.getSelectedTickerInfo },
-    selected_ticker: function(){ return this.$store.getters.getSelectedTicker }
+    selected_ticker: function(){ 
+      if(this.$store.getters.getSelectedTicker == null || this.$store.getters.getSelectedTicker == undefined) {
+        return this.portfolio.keys()[0]
+      }else{
+        return this.$store.getters.getSelectedTicker }
+      }
   },
   components: {
     Card,
