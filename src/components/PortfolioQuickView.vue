@@ -153,7 +153,7 @@ export default {
 .card:hover {
   border: 2px solid #42b983;
   z-index: 1;
-  transform: translateX(10px);
+  transform: scale(1.01) translateX(10px);
   box-shadow: 0 1.3rem 1.3rem 0 rgba(0,0,0,0.7);
 }
 .portfolio-quick-view {
