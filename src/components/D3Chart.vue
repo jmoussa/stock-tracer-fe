@@ -252,7 +252,7 @@ export default {
                   "$" + 
                   Math.round(selectedData.y * 100) / 100
                 )
-                .attr("x", x(selectedData.x) + 15)
+                .attr("x", x(selectedData.x) - x(selectedData.x) + 15)
                 .attr("y", y(0) - 20)
                 .style("fill", "white")
               })
