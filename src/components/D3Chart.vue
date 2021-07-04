@@ -29,13 +29,19 @@ export default {
       let _ticker_info = {};
       for(let key in ti){
         if(key == "type"){
-          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key].toUpperCase();
+          if(ti[key] == "stock"){
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = this.toTitleCase(ti[key].replaceAll("_", " "));
+          }else{
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key].toUpperCase();
+          }
         }else if(key == "id"){
           continue;
         }else if(key == "pe_ratio"){
           _ticker_info["P/E Ratio"] = ti[key];
         }else if(key == "percentage"){
           _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = Math.round(ti[key] * 100) / 100 + "%";
+        }else if(key == "quantity"){
+          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = Math.round(ti[key] * 100) / 100;
         }else{
           if( isNaN(parseFloat(ti[key]))){
             _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
