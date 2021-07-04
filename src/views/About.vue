@@ -18,10 +18,9 @@
           Some of these features include:
         </p>
         <ul>
-          <li>Visualizing entrypoints along the historical ticker chart</li>
-          <li>Ability to overlay MACD and other various signal lines over the historical ticker chart</li>
-          <li>Relevant News</li>
-          <li>Yahoo Finance based charts with Robinhood personalized portfolio</li>
+          <li>Visualizing market entrypoints and exitpoints along the historical ticker chart</li>
+          <li>The ability to overlay the MACD and other various signal lines over the historical ticker chart</li>
+          <li>Yahoo Finance based charts with Robinhood personalized portfolio (more brokers coming soon)</li>
         </ul>
       </div>
     </div> 
