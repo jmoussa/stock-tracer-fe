@@ -1,6 +1,6 @@
 <template>
   <div class="portfolio-quick-view" id="portfolio-quick-view">
-    <div v-if="loggedIn">
+    <div v-if="loggedIn && selected_ticker">
       <div class="cards" id="rh-personal-portfolio">
         <h2>Positions</h2>
         <Card class="card" v-for="(body, ticker, index) in portfolio" :key="ticker" :style="{zIndex: -(index)}" :zIndex="-(index)" :initialTitle="ticker" :initialBody="body" @mouseover="fetchTicker(ticker)"/>
@@ -54,10 +54,28 @@ export default {
     portfolio: function(){ return this.$store.getters.getPortfolioCards},
     selected_ticker: function(){ 
       if(this.$store.getters.getSelectedTicker == null || this.$store.getters.getSelectedTicker == undefined) {
-        return this.portfolio.keys()[0]
+        if (this.portfolio !== null && this.portfolio !== undefined){
+          return Object.keys(this.portfolio)[0];
+        }else{
+          return null;
+        }
       }else{
-        return this.$store.getters.getSelectedTicker }
+        return this.$store.getters.getSelectedTicker 
       }
+    }
+  },
+  watch: {
+    selected_ticker: function(){ 
+      if(this.$store.getters.getSelectedTicker == null || this.$store.getters.getSelectedTicker == undefined) {
+        if (this.portfolio !== null && this.portfolio !== undefined){
+          return Object.keys(this.portfolio)[0];
+        }else{
+          return null;
+        }
+      }else{
+        return this.$store.getters.getSelectedTicker 
+      }
+    }
   },
   components: {
     Card,

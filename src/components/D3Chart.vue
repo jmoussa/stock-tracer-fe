@@ -16,7 +16,10 @@
 
 <script>
 import * as d3 from "d3";
-
+var formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
 export default {
   name: "D3Chart",
   computed: {
@@ -31,7 +34,11 @@ export default {
         }else if(key == "pe_ratio"){
           _ticker_info["P/E Ratio"] = ti[key];
         }else{
-          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
+          if( isNaN(parseFloat(ti[key]))){
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
+          }else{
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = formatter.format(parseFloat(ti[key]));
+          }
         }
       } 
       return _ticker_info;
@@ -53,13 +60,17 @@ export default {
       let _ticker_info = {};
       for(let key in ti){
         if(key == "type"){
-          _ticker_info[key] = ti[key].toUpperCase();
+          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key].toUpperCase();
         }else if(key == "id"){
           continue; 
         }else if(key == "pe ratio"){
-          _ticker_info["P/E Ratio"] = ti[key];
+          _ticker_info["P/E Ratio"] = Math.round(ti[key] * 100) / 100;
         }else{
-          _ticker_info[key] = ti[key];
+          if( isNaN(parseFloat(ti[key]))){
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
+          }else{
+            _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = formatter.format(parseFloat(ti[key]));
+          }
         }
       } 
       return _ticker_info;
@@ -87,9 +98,9 @@ export default {
         
         // D3 Code
         // set the dimensions and margins of the graph
-        const margin = { top: 10, right: 25, bottom: 25, left: 25 };
+        const margin = { top: 30, right: 25, bottom: 25, left: 25 };
         const width = 1200 - margin.left - margin.right;
-        const height = 500 - margin.top - margin.bottom;
+        const height = 520 - margin.top - margin.bottom;
 
         // Clear Charts
         d3.select("#plot").selectAll("svg").remove();
@@ -148,6 +159,82 @@ export default {
                 return y(d.y);
               })
           );
+
+          // This allows to find the closest X index of the mouse:
+          var bisect = d3.bisector(function(d) { return d.x; }).left;
+
+          // Create the circle that travels along the curve of chart
+          var focus = svg
+            .append('g')
+            .append('circle')
+              .style("fill", "none")
+              .attr("stroke", "#42b983")
+              .attr('r', 5)
+              .style("opacity", 0)
+
+          // Create the text that travels along the curve of chart
+          var focusText = svg 
+            .append('g')
+            .append('text')
+              .style("opacity", 0)
+              .style("border", "2px solid white")
+              .attr("text-anchor", "left")
+              .attr("alignment-baseline", "middle")
+
+          // Add the line
+          svg
+            .append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "#42b983")
+            .attr("stroke-width", 2)
+            .attr("d", d3.line()
+              .x(function(d) { return x(d.x) })
+              .y(function(d) { return y(d.y) })
+            )
+
+          // Create a rect on top of the svg area: this rectangle recovers mouse position
+          svg
+            .append('rect')
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('width', width)
+            .attr('height', height)
+            .on('mouseover', () => {
+              focus.style("opacity", 1)
+              focusText.style("opacity", 1)
+            })
+            .on('mousemove', (event) => {
+              // recover coordinate we need
+              var x0 = x.invert(d3.pointer( event )[0]);
+              var i = bisect(data, x0, 1);
+              var selectedData = data[i];
+              
+              focus
+                .attr("cx", x(selectedData.x))
+                .attr("cy", y(selectedData.y))
+                .style("fill", "#42b983")
+              
+              focusText
+                .html(
+                  new Date(selectedData.x).toLocaleString('en-US', {
+                    weekday: 'short', // long, short, narrow
+                    day: 'numeric', // numeric, 2-digit
+                    year: 'numeric', // numeric, 2-digit
+                    month: 'long',
+                  }) + 
+                  "  -  " + 
+                  "$" + 
+                  Math.round(selectedData.y * 100) / 100
+                )
+                .attr("x", x(selectedData.x) - 30)
+                .attr("y", y(selectedData.y) - 20)
+                .style("fill", "white")
+              })
+            .on('mouseout', () => {
+              focus.style("opacity", 0)
+              focusText.style("opacity", 0)
+            });
       } else {
         console.error(this.ticker + " has no rows. No ticker was selected.");
       } 
@@ -219,4 +306,5 @@ h2 {
 .bold-accent {
   color: #42b983;
 }
+
 </style>
