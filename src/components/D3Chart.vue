@@ -1,10 +1,11 @@
 <template>
   <div class="d3-chart">
     <h2>{{ ticker }}</h2>
+    <h3 v-if="ticker_info">{{ ticker_info['Name'] }}</h3>
     <div class="chart">
       <div class="generic-container">
         <div class="wrapper" v-if="ticker_info">
-          <div class="grid-info-item" v-for="(item, key, index) in ticker_info" :key="index"><li><strong class="bold-accent">{{ key }}</strong>: {{ item }}</li></div> 
+          <div class="grid-info-item" v-for="(item, key, index) in ticker_info" :key="index"><li v-if="key !== 'Name'"><strong class="bold-accent">{{ key }}</strong>: {{ item }}</li></div> 
         </div>
         <div class="progress-6" v-else></div>
       </div>
@@ -33,6 +34,8 @@ export default {
           continue;
         }else if(key == "pe_ratio"){
           _ticker_info["P/E Ratio"] = ti[key];
+        }else if(key == "percentage"){
+          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = Math.round(ti[key] * 100) / 100 + "%";
         }else{
           if( isNaN(parseFloat(ti[key]))){
             _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
@@ -62,9 +65,11 @@ export default {
         if(key == "type"){
           _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key].toUpperCase();
         }else if(key == "id"){
-          continue; 
-        }else if(key == "pe ratio"){
-          _ticker_info["P/E Ratio"] = Math.round(ti[key] * 100) / 100;
+          continue;
+        }else if(key == "pe_ratio"){
+          _ticker_info["P/E Ratio"] = ti[key];
+        }else if(key == "percentage"){
+          _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = Math.round(ti[key] * 100) / 100 + "%";
         }else{
           if( isNaN(parseFloat(ti[key]))){
             _ticker_info[this.toTitleCase(key.replaceAll("_", " "))] = ti[key];
@@ -74,7 +79,7 @@ export default {
         }
       } 
       return _ticker_info;
-    }
+    },
   },
   methods: {
     formatHistoricalChart(OHLC_VAR = "High") {
@@ -100,7 +105,7 @@ export default {
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 25, bottom: 25, left: 25 };
         const width = 1200 - margin.left - margin.right;
-        const height = 520 - margin.top - margin.bottom;
+        const height = 450 - margin.top - margin.bottom;
 
         // Clear Charts
         d3.select("#plot").selectAll("svg").remove();
@@ -108,15 +113,17 @@ export default {
         // append the svg object to the body of the page
         const svg = d3.select("#plot")
           .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
           .append("g")
-          .attr(
-            "transform",
-            "translate(" + margin.left + "," + margin.top + ")"
-          );
+            .attr(
+              "transform",
+              "translate(" + margin.left + "," + margin.top + ")"
+            );
 
         const data = d3_formatted_data;
+
+        
 
         // Add X axis --> it is a date format
         const x = d3.scaleTime()
@@ -126,8 +133,10 @@ export default {
             })
           )
           .range([0, width]);
+        
         svg
           .append("g")
+          .attr("class", "x-axis")
           .attr("transform", "translate(0," + height + ")")
           .call(d3.axisBottom(x));
 
@@ -140,8 +149,11 @@ export default {
             }),
           ])
           .range([height, 0]);
-        svg.append("g").call(d3.axisLeft(y));
-
+        svg
+          .append("g")
+          .attr("class", "y-axis")
+          .call(d3.axisLeft(y));
+        
         // Add the line
         svg.append("path")
           .datum(data)
@@ -162,6 +174,13 @@ export default {
 
           // This allows to find the closest X index of the mouse:
           var bisect = d3.bisector(function(d) { return d.x; }).left;
+          
+          // this is the black vertical line to follow mouse
+          svg.append("path") 
+            .attr("class", "mouse-line")
+            .style("stroke", "white")
+            .style("stroke-width", "3px")
+            .style("opacity", "0");
 
           // Create the circle that travels along the curve of chart
           var focus = svg
@@ -227,8 +246,8 @@ export default {
                   "$" + 
                   Math.round(selectedData.y * 100) / 100
                 )
-                .attr("x", x(selectedData.x) - 30)
-                .attr("y", y(selectedData.y) - 20)
+                .attr("x", x(selectedData.x) + 15)
+                .attr("y", y(0) - 20)
                 .style("fill", "white")
               })
             .on('mouseout', () => {
@@ -249,7 +268,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 li {
   list-style: none;
   text-align: left;
@@ -294,12 +313,12 @@ li {
   height: 750px;
   width: 70%;
   margin: 0; 
-  /*border: 2px solid #42b983;*/
-  /*border-radius: 10px;*/
+  h3 {
+    color: #fff;
+  }
 }
 
 h2 {
-  margin: 0.5rem 0 ;
   font-size: 2rem;
   color: #42b983;
 }
