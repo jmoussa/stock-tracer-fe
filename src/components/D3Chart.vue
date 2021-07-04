@@ -1,7 +1,6 @@
 <template>
   <div class="d3-chart">
-    <h2>{{ ticker }}</h2>
-    <h3 v-if="ticker_info">{{ ticker_info['Name'] }}</h3>
+    <h2 v-if="ticker_info">{{ ticker_info['Name'] }}</h2>
     <div class="chart">
       <div class="generic-container">
         <div class="wrapper" v-if="ticker_info">
@@ -9,7 +8,9 @@
         </div>
         <div class="progress-6" v-else></div>
       </div>
-      <div id="plot" v-if="historicals"></div>
+      <div id="plot" v-if="historicals">
+        <h1>{{ ticker }} {{ OHLC_VAR }}s (day-over-day)</h1>
+      </div>
       <div class="progress-6" v-else></div> 
     </div>
   </div>
@@ -55,10 +56,14 @@ export default {
     historicals: function() { return this.$store.getters.getSelectedTickerHistoricalData }
   }, 
   props: {
-    ticker: String
+    ticker: String,
+    OHLC_VAR: {
+      type: String,
+      default: "Close"
+    }
   },
   mounted() {
-    this.formatHistoricalChart("High");
+    this.formatHistoricalChart();
   },
   watch: {
     ticker: function() {
@@ -88,7 +93,8 @@ export default {
     },
   },
   methods: {
-    formatHistoricalChart(OHLC_VAR = "High") {
+    formatHistoricalChart() {
+      var OHLC_VAR = this.OHLC_VAR;
       var d3_rows = this.historicals;
       var timeParse = d3.timeParse("%Y-%m-%d")
       
@@ -111,7 +117,7 @@ export default {
         // set the dimensions and margins of the graph
         const margin = { top: 30, right: 25, bottom: 25, left: 25 };
         const width = 1200 - margin.left - margin.right;
-        const height = 450 - margin.top - margin.bottom;
+        const height = 400 - margin.top - margin.bottom;
 
         // Clear Charts
         d3.select("#plot").selectAll("svg").remove();
@@ -194,7 +200,7 @@ export default {
             .append('circle')
               .style("fill", "none")
               .attr("stroke", "#42b983")
-              .attr('r', 5)
+              .attr('r', 7)
               .style("opacity", 0)
 
           // Create the text that travels along the curve of chart
@@ -249,12 +255,12 @@ export default {
                     month: 'long',
                   }) + 
                   "  -  " + 
-                  "$" + 
-                  Math.round(selectedData.y * 100) / 100
+                  formatter.format(Math.round(selectedData.y * 100) / 100)
                 )
                 .attr("x", x(selectedData.x) - x(selectedData.x) + 15)
                 .attr("y", y(0) - 20)
                 .style("fill", "white")
+                .style("font-size", "2rem")
               })
             .on('mouseout', () => {
               focus.style("opacity", 0)
