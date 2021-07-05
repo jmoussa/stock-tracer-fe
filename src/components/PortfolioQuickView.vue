@@ -17,6 +17,8 @@
     <div v-else id="rh-portfolio-login">
       <form class="login login100-form validate-form" @submit.prevent="onRHLogin">
         <h1>Sign-in to Robinhood</h1>
+        <h3>(Requires Authentication app like Google Authenticator or Okta Verify)</h3>
+        <br>
         <span class="login100-form-title p-b-48">
           <i class="zmdi zmdi-font"></i>
         </span>
@@ -31,11 +33,18 @@
           <input class="input100" v-model="password" type="password" placeholder="Password">
           <span class="focus-input100" data-placeholder="Password"></span>
         </div>
+        <div class="wrap-input100 validate-input">
+          <input class="input100" v-model="mfa_code" type="text" placeholder="MFA Code">
+          <span class="focus-input100" data-placeholder="MFA Code (check authentication app)"></span>
+        </div>
         <div class="container-login100-form-btn">
           <div class="wrap-login100-form-btn">
             <Button type="submit" text="Login"/>
           </div>
         </div> 
+        <div class="error-message" v-if="display_error">
+          <p>{{ error_message }}</p>
+        </div>
       </form>
     </div>
   </div>
@@ -49,7 +58,10 @@ import D3Chart from '@/components/D3Chart'
 export default {
   name: "PortfolioQuickView",
   computed : {
-    status: function(){return this.$store.state.status},
+    status: function(){ return this.$store.getters.status },
+    display_error: function(){ return this.$store.getters.isErrorDisplayed },
+    error_message: function(){ return this.$store.getters.getErrorMessage },
+    show_mfa: function(){ return this.$store.getters.getShowMFA },
     loggedIn : function(){ return this.$store.getters.commonLoggedIn},
     portfolio: function(){ return this.$store.getters.getPortfolioCards},
     selected_ticker: function(){ 
@@ -60,11 +72,15 @@ export default {
           return null;
         }
       }else{
-        return this.$store.getters.getSelectedTicker 
+        return this.$store.getters.getSelectedTicker;
       }
     }
   },
   watch: {
+    show_mfa: function(){ return this.$store.getters.getShowMFA },
+    portfolio: function(){ return this.$store.getters.getPortfolioCards},
+    display_error: function(){ return this.$store.getters.isErrorDisplayed },
+    error_message: function(){ return this.$store.getters.getErrorMessage },
     selected_ticker: function(){ 
       if(this.$store.getters.getSelectedTicker == null || this.$store.getters.getSelectedTicker == undefined) {
         if (this.portfolio !== null && this.portfolio !== undefined){
@@ -73,7 +89,7 @@ export default {
           return null;
         }
       }else{
-        return this.$store.getters.getSelectedTicker 
+        return this.$store.getters.getSelectedTicker;
       }
     }
   },
@@ -87,9 +103,19 @@ export default {
       console.log('open a stock modal with all info on stock + graph') 
     },
     onRHLogin: function () {
-      this.$store.dispatch('rhGetPortfolio')
-      this.$store.dispatch('rhGetHistoricals')
-     .catch(err => console.error(err))
+      this.$store.dispatch('getRobinhoodInfo', {"username": this.username, "password": this.password, "mfa_code": this.mfa_code})
+        .then(data => {
+          console.log("Robinhood Info")
+          console.log(data)
+          if (data !== false){
+            this.$store.commit("set_show_mfa", false)
+            this.$store.commit("remove_error_message")
+          }else{
+            let error_message = "Failed Login Info";
+            this.$store.commit("display_error_message", error_message)
+          }
+        })
+        .catch(() => this.$store.commit("set_show_mfa", false))
     },
     fetchTicker(ticker){
       this.$store.commit("set_selected_ticker", ticker);
@@ -100,12 +126,22 @@ export default {
     return {
       username: "",
       password : "",
+      mfa_code: "",
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.error-message {
+  p {
+    color: red;
+    font-size: 120%;
+  }
+  padding: 2rem;
+  border: 2px solid rgba(66, 185, 131, 1);
+  border-radius: 2rem;
+}
 .progress-6 {
   width:100%;
   height:300px;
@@ -153,7 +189,7 @@ export default {
 .card:hover {
   border: 2px solid #42b983;
   z-index: 1;
-  transform: scale(1.01) translateX(10px);
+  transform: scale(1.07) translateX(10px);
   box-shadow: 0 1.3rem 1.3rem 0 rgba(0,0,0,0.7);
 }
 .portfolio-quick-view {
