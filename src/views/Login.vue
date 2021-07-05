@@ -39,8 +39,8 @@ export default {
       let password = this.password
       this.$store.dispatch('login', { "username": email, "password": password })
         .then(() => {
-          this.$store.dispatch('rhGetPortfolio')
-          this.$store.dispatch('rhGetHistoricals');
+          //this.$store.dispatch('rhGetPortfolio')
+          //this.$store.dispatch('rhGetHistoricals');
           this.$router.push('/')
         })
         .catch(err => console.error(err))
@@ -50,8 +50,8 @@ export default {
       let password = this.password
       this.$store.dispatch('register', { "username": email, "password": password })
         .then(() => {
-          this.$store.dispatch('rhGetPortfolio')
-          this.$store.dispatch('rhGetHistoricals');
+          //this.$store.dispatch('rhGetPortfolio')
+          //this.$store.dispatch('rhGetHistoricals');
           this.$router.push('/')
         })
         .catch(err => console.error(err))

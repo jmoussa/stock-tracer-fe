@@ -3,8 +3,9 @@ import axios from "axios";
 
 const login_url = "http://127.0.0.1:8000/api/token";
 const register = "http://127.0.0.1:8000/api/register";
-const rh_portfolio = "http://127.0.0.1:8000/api/rh_portfolio";
-const rh_historical = "http://127.0.0.1:8000/api/rh_historical";
+const robinhood_info = "http://127.0.0.1:8000/api/robinhood/info";
+//const rh_portfolio = "http://127.0.0.1:8000/api/rh_portfolio";
+//const rh_historical = "http://127.0.0.1:8000/api/rh_historical";
 
 export default createStore({
   state: {
@@ -16,10 +17,17 @@ export default createStore({
     loggedIn: false,
     selectedTicker: null,
     selectedTickerInfo: {},
+    show_mfa: false,
+    display_error: false,
+    transactions: null,
+    error_message: ""
   },
   mutations: {
     auth_request(state) {
       state.status = "loading";
+    },
+    remove_loading(state) {
+      state.status = "success";
     },
     auth_success(state, token, user) {
       state.status = "success";
@@ -37,6 +45,10 @@ export default createStore({
     },
     rh_request_success(state) {
       state.loggedIn = true;
+      state.status = "success";
+    },
+    set_transactions(state, _transactions){
+      state.transactions = _transactions;
     },
     set_portfolio(state, _portfolio) {
       state.portfolio_cards = _portfolio;
@@ -50,16 +62,31 @@ export default createStore({
     set_selected_ticker_info(state, _selectedTickerInfo) {
       state.selectedTickerInfo = _selectedTickerInfo;
     },
+    set_show_mfa(state, _mfa_show){
+      state.show_mfa = _mfa_show
+    },
+    display_error_message(state, _error_message) {
+      state.display_error = true;
+      state.error_message = _error_message;
+    },
+    remove_error_message(state) {
+      state.display_error = false;
+      state.error_message = "";
+    }
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
     status: (state) => state.status,
     commonLoggedIn: (state) => state.loggedIn,
+    getTransactions: (state) => state.transactions,
     getPortfolioCards: (state) => state.portfolio_cards,
     getSelectedTicker: (state) => state.selectedTicker,
     getSelectedTickerInfo: (state) => state.selectedTickerInfo,
     getSelectedTickerHistoricalData: (state) =>
       state.historical_data[state.selectedTicker],
+    getShowMFA: (state) => state.show_mfa,
+    getErrorMessage: (state) => state.error_message,
+    isErrorDisplayed: (state) => state.display_error
   },
   actions: {
     logout({ commit }) {
@@ -132,61 +159,34 @@ export default createStore({
           });
       });
     },
-    rhGetPortfolio({ commit }) {
-      return new Promise((resolve, reject) => {
-        commit("auth_request");
-        //const body = {
-        //username: user.username,
-        //password: user.password,
-        //};
-        let token = localStorage.getItem("token");
-        if (token != "" && token != undefined) {
-          const instance = axios.create({
-            timeout: 10000,
-            headers: {
-              "Access-Control-Allow-Origin": "*",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          instance
-            .get(rh_portfolio)
-            .then((resp) => {
-              let portfolio_response = resp.data;
-              commit("set_portfolio", portfolio_response);
-              commit("rh_request_success");
-              resolve(portfolio_response);
-            })
-            .catch((err) => {
-              commit("auth_error", err);
-              localStorage.removeItem("token");
-              reject(err);
-            });
-        } else {
-          commit("auth_error", "No token found");
-          localStorage.removeItem("token");
-          reject("No token found");
-        }
-      });
-    },
-    rhGetHistoricals({ commit }) {
+    getRobinhoodInfo({ commit }, body) {
       return new Promise((resolve, reject) => {
         commit("auth_request");
         let token = localStorage.getItem("token");
         if (token != "" && token != undefined) {
           const instance = axios.create({
-            timeout: 10000,
+            timeout: 30000,
             headers: {
+              "content-type": "application/json",
+              accept: "application/json",
               "Access-Control-Allow-Origin": "*",
               Authorization: `Bearer ${token}`,
             },
           });
           instance
-            .get(rh_historical)
+            .post(robinhood_info, body)
             .then((resp) => {
-              let portfolio_response = resp.data;
-              commit("set_historicals", portfolio_response);
-              commit("rh_request_success");
-              resolve(portfolio_response);
+              let _response = resp.data;
+              if (_response["message"] == undefined || _response["message"] == null) {
+                commit("set_portfolio", _response["build_holdings"]);
+                commit("set_historicals", _response["historicals"]);
+                commit("set_transactions", _response["transactions"]);
+                commit("rh_request_success");
+                resolve(_response["build_holdings"]);
+              } else {
+                commit("remove_loading");
+                resolve(false);
+              }
             })
             .catch((err) => {
               commit("auth_error", err);
