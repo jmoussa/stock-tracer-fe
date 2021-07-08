@@ -20,7 +20,9 @@ export default createStore({
     show_mfa: false,
     display_error: false,
     transactions: null,
-    error_message: ""
+    error_message: "",
+    account_profile: {},
+    earnings: null,
   },
   mutations: {
     auth_request(state) {
@@ -47,7 +49,10 @@ export default createStore({
       state.loggedIn = true;
       state.status = "success";
     },
-    set_transactions(state, _transactions){
+    set_account_profile(state, _profile) {
+      state.account_profile = _profile;
+    },
+    set_transactions(state, _transactions) {
       state.transactions = _transactions;
     },
     set_portfolio(state, _portfolio) {
@@ -62,8 +67,8 @@ export default createStore({
     set_selected_ticker_info(state, _selectedTickerInfo) {
       state.selectedTickerInfo = _selectedTickerInfo;
     },
-    set_show_mfa(state, _mfa_show){
-      state.show_mfa = _mfa_show
+    set_show_mfa(state, _mfa_show) {
+      state.show_mfa = _mfa_show;
     },
     display_error_message(state, _error_message) {
       state.display_error = true;
@@ -72,12 +77,16 @@ export default createStore({
     remove_error_message(state) {
       state.display_error = false;
       state.error_message = "";
-    }
+    },
+    set_earnings(state, _earnings) {
+      state.earnings = _earnings;
+    },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
     status: (state) => state.status,
     commonLoggedIn: (state) => state.loggedIn,
+    getAccountProfile: (state) => state.account_profile,
     getTransactions: (state) => state.transactions,
     getPortfolioCards: (state) => state.portfolio_cards,
     getSelectedTicker: (state) => state.selectedTicker,
@@ -86,7 +95,8 @@ export default createStore({
       state.historical_data[state.selectedTicker],
     getShowMFA: (state) => state.show_mfa,
     getErrorMessage: (state) => state.error_message,
-    isErrorDisplayed: (state) => state.display_error
+    isErrorDisplayed: (state) => state.display_error,
+    getEarnings: (state) => state.earnings,
   },
   actions: {
     logout({ commit }) {
@@ -177,10 +187,15 @@ export default createStore({
             .post(robinhood_info, body)
             .then((resp) => {
               let _response = resp.data;
-              if (_response["message"] == undefined || _response["message"] == null) {
+              if (
+                _response["message"] == undefined ||
+                _response["message"] == null
+              ) {
                 commit("set_portfolio", _response["build_holdings"]);
                 commit("set_historicals", _response["historicals"]);
                 commit("set_transactions", _response["transactions"]);
+                commit("set_account_profile", _response["account_profile"]);
+                commit("set_earnings", _response["earnings"]);
                 commit("rh_request_success");
                 resolve(_response["build_holdings"]);
               } else {
