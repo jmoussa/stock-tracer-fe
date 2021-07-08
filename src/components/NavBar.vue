@@ -1,7 +1,8 @@
 <template>
   <div id="nav">
     <div id="nav-left">
-      <h2>Stock Tracer</h2>
+      <h2 v-if="account_profile['extended_hours_equity']">Investing: <b>{{ formatter().format(account_profile['extended_hours_equity']) }}</b></h2>
+      <h2 v-else>Stock Tracer</h2>
     </div>
     <div id="nav-right">
       <span v-if="!isLoggedIn"><router-link to="/login" class="nav-element">Login</router-link></span>
@@ -16,9 +17,19 @@
 export default {
   name: "NavBar",
   computed : {
-    isLoggedIn : function(){ return this.$store.getters.isLoggedIn}
+    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
+    account_profile: function() { return this.$store.getters.getAccountProfile }
+  },
+  watch: {
+    account_profile: function() { return this.$store.getters.getAccountProfile }
   },
   methods: {
+    formatter() { 
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+    },
     logout: function () {
       this.$store.dispatch('logout')
       .then(() => {
@@ -35,12 +46,12 @@ export default {
   z-index: 10;
   position: fixed;
   top: 0; 
-  padding: 2rem;
+  padding: 1.5rem;
   width: 100%;
   margin: auto;
   display: block;
   font-size: 2rem;
-  height: 8rem;
+  height: 7rem;
   background: #2c3e50;
 }
 
