@@ -165,11 +165,6 @@ export default {
 }
 .cards {
   float: left;
-  width: 25%;
-  /*display: grid;*/
-  /*grid-template-columns: repeat(4, 1fr);*/
-  /*grid-auto-rows: auto;*/
-  /*grid-gap: 1.5rem;*/
   padding: .5rem;
 }
 .cards > h2 {
@@ -180,10 +175,10 @@ export default {
 .card {
   cursor: pointer;
   box-shadow: 0 .5rem .8rem 0 rgba(0,0,0,0.2);
-  border-radius: 10px;
-  padding: .3rem;
+  border-radius: 1rem;
+  padding: .2rem;
   background-color: #050517;
-  margin-bottom: -1.5rem;
+  margin-bottom: -2rem;
   transition: transform .1s;
 }
 .card:hover {
@@ -195,11 +190,48 @@ export default {
 .portfolio-quick-view {
   background-color: #2c3e50;
   padding: 0;
+  margin: 0;
   margin-top: 5rem;
   overflow: visible;
 }
+#rh-personal-portfolio {
+  height: 85.6vh;
+  width: 24%;
+  overflow-x: visible;
+  overflow-y: scroll;
+  display: block;
+}
 .d3-chart-container {
-  width:75%; 
+  display: block;
+  height: 85.6vh;
+  padding: 0;
+  margin: 0;
+  overflow-x: visible;
+  overflow-y: scroll;
+  width: 76%; 
   float: right;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.d3-chart-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.d3-chart-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#rh-personal-portfolio::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#rh-personal-portfolio {  
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 </style>
