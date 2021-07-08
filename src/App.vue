@@ -44,8 +44,6 @@ body {
   margin: 2rem auto;
   width: 100%;
   overflow: visible;
-  min-height: 1000px;
-  /*border: 1px solid  #42b983;*/
   padding: 20px;
   border-radius: 10px;
 }
