@@ -12,6 +12,12 @@
         <h1>{{ ticker }} {{ OHLC_VAR }}s (day-over-day)</h1>
       </div>
       <div class="progress-6" v-else></div> 
+      
+      <div class="earnings" v-if="earnings[ticker].length > 0">
+        <h1 class="left">Earnings</h1>
+        {{ earnings[ticker] }}
+        <div class="grid-info-item" v-for="item in earnings[ticker]" :key="item"><li>{{ item }}</li><br></div> 
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +59,10 @@ export default {
       } 
       return _ticker_info;
     },
-    historicals: function() { return this.$store.getters.getSelectedTickerHistoricalData }
+    historicals: function() { return this.$store.getters.getSelectedTickerHistoricalData },
+    transactions: function() { return this.$store.getters.getTransactions },
+    account_profile: function() { return this.$store.getters.getAccountProfile },
+    earnings: function() { return this.$store.getters.getEarnings }
   }, 
   props: {
     ticker: String,
@@ -69,6 +78,9 @@ export default {
     ticker: function() {
       this.formatHistoricalChart();
     },
+    transactions: function() { return this.$store.getters.getTransactions },
+    account_profile: function() { return this.$store.getters.getAccountProfile },
+    earnings: function() { return this.$store.getters.getEarnings },
     ticker_info: function() { 
       const ti = this.$store.getters.getSelectedTickerInfo;
       let _ticker_info = {};
@@ -93,6 +105,12 @@ export default {
     },
   },
   methods: {
+    formatter() { 
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+    },
     formatHistoricalChart() {
       var OHLC_VAR = this.OHLC_VAR;
       var d3_rows = this.historicals;
@@ -135,8 +153,6 @@ export default {
 
         const data = d3_formatted_data;
 
-        
-
         // Add X axis --> it is a date format
         const x = d3.scaleTime()
           .domain(
@@ -146,6 +162,7 @@ export default {
           )
           .range([0, width]);
         
+        // X axis
         svg
           .append("g")
           .attr("class", "x-axis")
@@ -161,10 +178,13 @@ export default {
             }),
           ])
           .range([height, 0]);
+        
+        // Y axis
         svg
           .append("g")
           .attr("class", "y-axis")
           .call(d3.axisLeft(y));
+        
         
         // Add the line
         svg.append("path")
@@ -188,19 +208,22 @@ export default {
           var bisect = d3.bisector(function(d) { return d.x; }).left;
           
           // this is the black vertical line to follow mouse
-          svg.append("path") 
-            .attr("class", "mouse-line")
-            .style("stroke", "white")
-            .style("stroke-width", "3px")
-            .style("opacity", "0");
+          var black_line = svg
+            .append('g') 
+            .append("line") 
+              .attr("class", "mouse-line")
+              .style("fill", "white")
+              .attr('stroke-width', '1px')
+              .style("stroke", "white")
+              .style("opacity", 0);
 
           // Create the circle that travels along the curve of chart
           var focus = svg
             .append('g')
             .append('circle')
-              .style("fill", "none")
-              .attr("stroke", "#42b983")
-              .attr('r', 7)
+              .style("fill", "white")
+              .attr("stroke", "white")
+              .attr('r', 4)
               .style("opacity", 0)
 
           // Create the text that travels along the curve of chart
@@ -234,6 +257,7 @@ export default {
             .on('mouseover', () => {
               focus.style("opacity", 1)
               focusText.style("opacity", 1)
+              black_line.style("opacity", 1)
             })
             .on('mousemove', (event) => {
               // recover coordinate we need
@@ -244,7 +268,6 @@ export default {
               focus
                 .attr("cx", x(selectedData.x))
                 .attr("cy", y(selectedData.y))
-                .style("fill", "#42b983")
               
               focusText
                 .html(
@@ -257,15 +280,23 @@ export default {
                   "  -  " + 
                   formatter.format(Math.round(selectedData.y * 100) / 100)
                 )
-                .attr("x", x(selectedData.x) - x(selectedData.x) + 15)
+                .attr("x", 15)
                 .attr("y", y(0) - 20)
                 .style("fill", "white")
                 .style("font-size", "2rem")
-              })
+
+              black_line
+                .attr('x1', x(selectedData.x))
+                .attr('y1', y(0))
+                .attr('x2', x(selectedData.x))
+                .attr('y2', y(selectedData.y))
+                .attr('height', y(selectedData.y))
+            })
             .on('mouseout', () => {
-              focus.style("opacity", 0)
-              focusText.style("opacity", 0)
-            });
+              focus.style("opacity", 0.8)
+              focusText.style("opacity", 0.8)
+              black_line.style("opacity", 0.8)
+            })
       } else {
         console.error(this.ticker + " has no rows. No ticker was selected.");
       } 
@@ -281,6 +312,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.generic-container {
+  border: 2px solid #42b983;
+  border-radius: 2rem;
+  margin: 1rem 0;
+  width: 100%;
+  text-align: center;
+  padding: 0;
+}
 li {
   list-style: none;
   text-align: left;
@@ -288,11 +327,8 @@ li {
 .wrapper {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 2px solid rgba(66, 185, 131, 0.5);
-  border-radius: 2rem;
   padding: 2rem;
   grid-auto-rows: minmax(10px, auto);
-  margin-bottom: 2rem;
 }
 .grid-info-item {
   margin: 0 4px;
@@ -321,10 +357,10 @@ li {
     100% {inset:0}
 }
 .d3-chart {
-  position: fixed;
   height: 750px;
-  width: 70%;
+  width: 100%;
   margin: 0; 
+  text-align: center;
   h3 {
     color: #fff;
   }
@@ -337,5 +373,7 @@ h2 {
 .bold-accent {
   color: #42b983;
 }
-
+.left {
+  text-align: left;
+}
 </style>
