@@ -2,25 +2,33 @@
   <div class="d3-chart">
     <h2 v-if="ticker_info">{{ ticker_info['Name'] }}</h2>
     <div class="chart">
+      <div id="plot" v-if="historicals">
+        <!--<h1>{{ ticker }} {{ OHLC_VAR }}s (day-over-day)</h1>-->
+        <div class="macd-checkbox">
+          <h3>{{ chart_view }}</h3>
+          <input type="checkbox" id="toggle" v-on:click="toggleMACD(this)"/>
+          <label for="toggle"></label>
+        </div>
+      </div>
+      <div class="progress-6" v-else></div> 
       <div class="generic-container">
         <div class="wrapper" v-if="ticker_info">
           <div class="grid-info-item" v-for="(item, key, index) in ticker_info" :key="index"><li v-if="key !== 'Name'"><strong class="bold-accent">{{ key }}</strong>: {{ item }}</li></div> 
         </div>
         <div class="progress-6" v-else></div> 
       </div>
-      <div id="plot" v-if="historicals">
-        <h1>{{ ticker }} {{ OHLC_VAR }}s (day-over-day)</h1>
-        <div class="macd-checkbox">
-          <h3>Historical -  MACD</h3>
-          <input type="checkbox" id="toggle" v-on:click="toggleMACD(this)"/>
-          <label for="toggle"></label>
-        </div>
-      </div>
-      <div class="progress-6" v-else></div> 
       <div class="earnings" v-if="earnings[ticker].length > 0">
         <h1 class="left">Earnings</h1>
-        {{ earnings[ticker] }}
-        <div class="grid-info-item" v-for="item in earnings[ticker]" :key="item"><li>{{ item }}</li><br></div> 
+        <div class="wrapper" v-if="earnings">
+          <div class="grid-info-item" v-for="item in earnings[ticker]" :key="item">
+            <div class="grid-info-item" v-for="(val, key, index) in item" :key="index">
+              <li v-if="key !== 'Name'">
+                <strong class="bold-accent">{{ key }}</strong>: {{ val }}
+              </li>
+            </div>
+            <br>
+          </div> 
+        </div>
       </div>
     </div>
   </div>
@@ -62,6 +70,13 @@ export default {
         }
       } 
       return _ticker_info;
+    },
+    chart_view: function() { 
+      if(this.macd_toggle){
+        return "MACD";
+      }else{
+        return "Historical";
+      }
     },
     historicals: function() { return this.$store.getters.getSelectedTickerHistoricalData },
     transactions: function() { return this.$store.getters.getTransactions },
@@ -341,16 +356,16 @@ export default {
         var focus = svg
           .append('g')
           .append('circle')
-            .style("fill", "white")
-            .attr("stroke", "white")
-            .attr('r', 2)
+            .style("fill", "#42b983")
+            .attr("stroke", "#42b983")
+            .attr('r', 3)
             .style("opacity", 0)
         
         var focusLine =  svg
           .append('g') 
           .append("line") 
             .attr("class", "mouse-line")
-            .style("fill", "#2c0e37")
+            .style("fill", "#42b983")
             .attr('stroke-width', '1px')
             .style("stroke", "#42b983")
             .style("opacity", 0);
@@ -360,7 +375,7 @@ export default {
           .append('circle')
             .style("fill", "red")
             .attr("stroke", "red")
-            .attr('r', 2)
+            .attr('r', 3)
             .style("opacity", 0)
 
         var focusSecondaryLine =  svg
@@ -556,7 +571,7 @@ label {
 .generic-container {
   border: 2px solid #42b983;
   border-radius: 2rem;
-  margin: 1rem 0;
+  margin: 4rem 0;
   width: 100%;
   text-align: center;
   padding: 0;
