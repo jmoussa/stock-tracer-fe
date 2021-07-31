@@ -1,4 +1,18 @@
-# stock-tracer-fe
+# Stock Tracer Front-End
+
+This is the front-end Vue.js build for the Stock Tracer.
+Currently Stock Tracer only links up with Robinhood users (and if you have 2-factor authentication, it needs to be via a 3rd party application like Okta, Authenticator, etc.)
+
+## Supercharge Your Online Financial Dashboards
+
+By linking with Robinhood (and more online brokerages, comming soon) Stock Tracer is able to give you additional insights and metrics via interactive dashboards showcasing:
+
+- Our default Historical Stock Price Timeline
+- Earnings per Quarter View & additional stock info
+- MACD + Signal Line Graphs
+- Dividend Timeline (coming soon)
+
+# Get Started with npm
 
 ## Project setup
 
