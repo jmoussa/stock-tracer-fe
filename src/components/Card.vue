@@ -4,10 +4,10 @@
     <h4>{{ initialBody.name }}</h4>
     <div v-for="(value, key) in body" :key="key" class="rh-portfolio-card-info">
       <div v-if="left_pill == key && value < 0" class="left-pill red-pill">
-        <span>{{ formatter.format(value) }}</span>
+        <span>{{ value }}%</span>
       </div> 
       <div v-if="left_pill == key && value >= 0" class="left-pill green-pill">
-        <span>+{{ formatter.format(value) }}</span>
+        <span>+{{ value }}%</span>
       </div>
       <div v-if="right_pill == key && value < 0" class="right-pill red-pill">
         <span>{{ formatter.format(value) }}</span>
@@ -32,12 +32,12 @@ export default {
     visible_fields: {
       type: Array,
       default: function () {
-        return ['price', 'equity_change'];
+        return ['price', 'percent_change'];
       }
     },
     left_pill: {
       type: String,
-      default: "equity_change"
+      default: "percent_change" // make depend on visible_fields
     },
     right_pill: {
       type: String,
@@ -59,6 +59,10 @@ export default {
           //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
         }),
     }
+  },
+  created: function() {
+    console.log("BODY");
+    console.log(this.body);
   },
   methods: {
     onClick(){
@@ -100,7 +104,7 @@ h3 {
   margin: auto;
   padding: 1rem;
   border-right: 1px solid black;
-  border-radius: 20px 0px 0px 20px;
+  border-radius: 2rem 0px 0px 2rem;
 }
 .right-pill {
   z-index: 5;
@@ -112,7 +116,7 @@ h3 {
   margin: auto;
   padding: 1rem;
   border-left: 1px solid black;
-  border-radius: 0px 20px 20px 0px;
+  border-radius: 0px 2rem 2rem 0px;
 }
 .rh-portfolio-card-info {
   z-index: 5;
