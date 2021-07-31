@@ -166,6 +166,7 @@ export default {
 .cards {
   float: left;
   padding: .5rem;
+  padding-bottom: 5rem;
 }
 .cards > h2 {
   text-align: left;
