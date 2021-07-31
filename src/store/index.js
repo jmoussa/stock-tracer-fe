@@ -1,11 +1,10 @@
 import { createStore } from "vuex";
 import axios from "axios";
+//import { stackOffsetExpand } from "d3";
 
 const login_url = "http://127.0.0.1:8000/api/token";
 const register = "http://127.0.0.1:8000/api/register";
 const robinhood_info = "http://127.0.0.1:8000/api/robinhood/info";
-//const rh_portfolio = "http://127.0.0.1:8000/api/rh_portfolio";
-//const rh_historical = "http://127.0.0.1:8000/api/rh_historical";
 
 export default createStore({
   state: {
@@ -23,6 +22,8 @@ export default createStore({
     error_message: "",
     account_profile: {},
     earnings: null,
+    macd_data: null,
+    dividends: null,
   },
   mutations: {
     auth_request(state) {
@@ -81,6 +82,12 @@ export default createStore({
     set_earnings(state, _earnings) {
       state.earnings = _earnings;
     },
+    set_macd_data(state, _macd) {
+      state.macd_data = _macd;
+    },
+    set_dividends(state, _dividends) {
+      state.dividends = _dividends;
+    },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
@@ -90,13 +97,20 @@ export default createStore({
     getTransactions: (state) => state.transactions,
     getPortfolioCards: (state) => state.portfolio_cards,
     getSelectedTicker: (state) => state.selectedTicker,
-    getSelectedTickerInfo: (state) => state.selectedTickerInfo,
-    getSelectedTickerHistoricalData: (state) =>
-      state.historical_data[state.selectedTicker],
+    getSelectedTickerInfo: (state) => {
+      if (state.selectedTickerInfo !== {}){
+        return state.selectedTickerInfo
+      }else{
+        return state.portfolio[Object.keys(state.portfolio)[0]]
+      }
+    },
+    getSelectedTickerHistoricalData: (state) => state.historical_data[state.selectedTicker],
     getShowMFA: (state) => state.show_mfa,
     getErrorMessage: (state) => state.error_message,
     isErrorDisplayed: (state) => state.display_error,
     getEarnings: (state) => state.earnings,
+    getSelectedMACD: (state) => state.macd_data[state.selectedTicker],
+    getDividends: (state) => state.dividends,
   },
   actions: {
     logout({ commit }) {
@@ -196,6 +210,8 @@ export default createStore({
                 commit("set_transactions", _response["transactions"]);
                 commit("set_account_profile", _response["account_profile"]);
                 commit("set_earnings", _response["earnings"]);
+                commit("set_macd_data", _response["macd_data"]);
+                commit("set_dividends", _response["dividends"]);
                 commit("rh_request_success");
                 resolve(_response["build_holdings"]);
               } else {
